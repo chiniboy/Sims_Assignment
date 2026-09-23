@@ -17,7 +17,7 @@ ARENA_CENTER_PIXELS = np.array([WIDTH / 2, HEIGHT / 2], dtype=float)
 ARENA_CENTER = ARENA_CENTER_PIXELS * METERS_PER_PIXEL
 ARENA_R = ARENA_RADIUS_METERS
 
-# Start with 1 ball, then 2. Many at once is the bonus.
+# The simulation starts with a fixed number of particles; this is the current count.
 NUM_PARTICLES = 300
 PARTICLE_RADIUS_PIXELS = 5
 PARTICLE_RADIUS = PARTICLE_RADIUS_PIXELS * METERS_PER_PIXEL
@@ -57,7 +57,7 @@ for i in range(NUM_PARTICLES):
         np.sin(angle)
     ]))
 
-# Total energy calculations
+# Total mechanical energy calculations
 def total_mechanical_energy():
     position_array = np.array(positions)
     velocity_array = np.array(velocities)
@@ -67,7 +67,7 @@ def total_mechanical_energy():
 
 INITIAL_TOTAL_ENERGY = total_mechanical_energy()
 
-#Keepin initial enegy same throughout
+# Keep the initial energy approximately fixed throughout the run.
 def restore_total_energy():
     position_array = np.array(positions)
     velocity_array = np.array(velocities)

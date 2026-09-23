@@ -179,12 +179,12 @@ class SandSim:
                         if 0 <= nx < self.width and 0 <= ny < self.height:
                             neighbor_mat = self._types[ny, nx]
                             if neighbor_mat == Material.SAWDUST:
-                                # 20% chance to ignite adjacent sawdust
+                                # 70% chance to ignite adjacent sawdust.
                                 if _rng.random() < 0.7:
                                     self._types[ny, nx] = Material.FIRE
                                     self._fire_lifespans[ny, nx] = _rng.integers(5, 13)
                             elif neighbor_mat == Material.WATER:
-                                # 30% chance to extinguish fire when touching water
+                                # 50% chance to extinguish fire when touching water.
                                 if _rng.random() < 0.5:
                                     self._types[y, x] = Material.SMOKE
                                     self._smoke_lifespans[y, x] = _rng.integers(10, 20)
@@ -193,7 +193,7 @@ class SandSim:
                     remaining = self._fire_lifespans[y, x] - 1
 
                     # --- 2. NEW: UPWARD CONE SPARK SPAWNING ---
-                    # 8% chance per frame to shoot a spark upward and outward
+                    # 20% chance per frame to shoot a spark upward and outward.
                     if _rng.random() < 0.2:
                         # Randomize distance away (1 to 3 pixels up)
                         spark_dist_y = _rng.integers(1, 4)
@@ -211,7 +211,7 @@ class SandSim:
 
                     # --- 3. MOVEMENT & REDUCED SMOKE ---
                     if y > 0 and self._types[y - 1, x] == Material.EMPTY and _rng.random() < 0.55:
-                        # CRITICAL REDUCTION: Only 45% chance to leave smoke behind when rising
+                        # The rising-fire branch only leaves smoke 45% of the time, after the earlier empty-space check.
                         self._types[y, x] = Material.SMOKE if _rng.random() < 0.45 else Material.EMPTY
                         
                         if self._types[y, x] == Material.SMOKE:
@@ -222,15 +222,15 @@ class SandSim:
                         self._fire_lifespans[y, x] = 0
 
                     elif y > 0 and self._types[y - 1, x] == Material.EMPTY and _rng.random() < 0.1:
-                        # CRITICAL REDUCTION: Only 10% chance to just puff smoke upward
+                        # 10% chance to puff smoke upward without moving the flame itself.
                         self._types[y - 1, x] = Material.SMOKE
                         self._smoke_lifespans[y - 1, x] = _rng.integers(5, 15)
                         self._fire_lifespans[y, x] = remaining
 
                     elif remaining <= 0:
-                        # CRITICAL REDUCTION: When fire dies naturally, it only becomes smoke 30% of the time. 
-                        # Otherwise, it just vanishes cleanly.
-                        if _rng.random() < 0.30:
+                        # When fire dies naturally, it only becomes smoke 10% of the time.
+                        # Otherwise, it vanishes cleanly.
+                        if _rng.random() < 0.10:
                             self._types[y, x] = Material.SMOKE
                             self._smoke_lifespans[y, x] = _rng.integers(5, 15)
                         else:
